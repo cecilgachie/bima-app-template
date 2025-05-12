@@ -1,15 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/Login.css';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Login() {
   const [userType, setUserType] = useState('customer');
   const [showPassword, setShowPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check if there's a message in the location state (from redirect)
+    if (location.state && location.state.message) {
+      setSuccessMessage(location.state.message);
+      
+      // Clear the message after 5 seconds
+      const timer = setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [location]);
 
   return (
     <div className="login-root">
       <div className="login-left" />
       <div className="login-right">
         <form className="login-form">
+          {successMessage && (
+            <div className="login-success-message">
+              {successMessage}
+            </div>
+          )}
           <img src="/logo.svg" alt="CIC GROUP" className="login-logo" />
           <div className="login-title">Sign in to CIC EasyBima</div>
           <div className="login-subtitle">Getting Insured with us is easy as 1-2-3</div>
@@ -74,7 +96,7 @@ export default function Login() {
           </div>
           <button className="login-submit-btn" type="submit">Sign In</button>
           <div className="login-register-row">
-            Don't have an account? <a href="#" className="login-link">Register</a>
+            Don't have an account? <Link to="/register" className="login-link">Register</Link>
           </div>
         </form>
       </div>
